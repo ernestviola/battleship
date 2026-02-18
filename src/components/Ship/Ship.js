@@ -7,6 +7,7 @@ class Ship {
    * @param {Number} length how long is the ship?
    */
   constructor(length) {
+    if (typeof length !== "number") throw Error("Ship length must be a number");
     this.length = length;
   }
 

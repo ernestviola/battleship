@@ -5,6 +5,8 @@
  * M = miss
  */
 
+import Ship from "../Ship/Ship.js";
+
 class Gameboard {
   board = null;
   ships = null;
@@ -20,7 +22,12 @@ class Gameboard {
 
   receiveAttack(x, y) {}
 
-  placeShip(row, col, ship) {
+  /**
+   *
+   * @param {Array} coordArr A 2D array filled with coordinates
+   * @param {Ship} ship Takes a ship object from Ship.js
+   */
+  placeShip(coordArr, ship) {
     if (ships.includes(ship)) {
       // remove the ship from the board in order to replace it
     }
