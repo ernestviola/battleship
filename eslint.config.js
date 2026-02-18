@@ -1,5 +1,6 @@
 import { defineConfig } from "eslint/config";
 import js from "@eslint/js";
+import jestPlugin from "eslint-plugin-jest";
 
 export default defineConfig([
   {
@@ -7,7 +8,7 @@ export default defineConfig([
     plugins: {
       js,
     },
-    extends: ["js/recommended", "plugin:jest/recommended"],
+    extends: ["js/recommended"],
     rules: {
       "no-unused-vars": "warn",
       "no-undef": "warn",
@@ -17,6 +18,13 @@ export default defineConfig([
       globals: {
         console: "readonly",
       },
+    },
+  },
+  {
+    files: ["**/*.test.js", "**/*.spec.js"],
+    ...jestPlugin.configs["flat/recommended"],
+    rules: {
+      ...jestPlugin.configs["flat/recommended"].rules,
     },
   },
 ]);
