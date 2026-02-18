@@ -7,7 +7,7 @@ export default defineConfig([
     plugins: {
       js,
     },
-    extends: ["js/recommended"],
+    extends: ["js/recommended", "plugin:jest/recommended"],
     rules: {
       "no-unused-vars": "warn",
       "no-undef": "warn",
