@@ -253,3 +253,36 @@ test("can move an already placed ship to a spot that contains one or more of its
   ]);
   expect(game.ships.length).toBe(1);
 });
+
+test("receive attack", () => {
+  const game = new Gameboard();
+  const ship_length_4 = new Ship(4);
+  const ship_length_4_coord = [
+    [0, 0],
+    [0, 1],
+    [0, 2],
+    [0, 3],
+  ];
+  game.placeShip(ship_length_4_coord, ship_length_4);
+  expect(game.receiveAttack(0, 1)).toBe("H");
+  expect(game.receiveAttack(1, 1)).toBe("M");
+  expect(game.board[0][1].cellStatus).toBe("H");
+  expect(game.board[1][1].cellStatus).toBe("M");
+});
+
+test("cant attack a target twice", () => {
+  const game = new Gameboard();
+  const ship_length_4 = new Ship(4);
+  const ship_length_4_coord = [
+    [0, 0],
+    [0, 1],
+    [0, 2],
+    [0, 3],
+  ];
+  game.placeShip(ship_length_4_coord, ship_length_4);
+  expect(game.receiveAttack(0, 1)).toBe("H");
+  expect(game.receiveAttack(0, 1)).toBe(false);
+  expect(game.board[0][1].cellStatus).toBe("H");
+  //test hit
+  //test miss
+});

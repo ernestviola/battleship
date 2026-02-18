@@ -1,8 +1,8 @@
 /**
- * S = ship
  * O = open
  * H = ship hit
  * M = miss
+ * S = unhit SHIP
  */
 
 import Ship from "../Ship/Ship.js";
@@ -10,23 +10,36 @@ import Ship from "../Ship/Ship.js";
 class Gameboard {
   board = null;
   ships = [];
-  #emptyCell = {
-    shipIndex: null,
-    cellStatus: "O",
-    ship: null,
-  };
   /**
    *
    * @param {Number} rows Number of rows on the board
    * @param {Number} cols Number of columns on the board
    */
   constructor(rows = 10, cols = 10) {
-    this.board = new Array(rows)
-      .fill()
-      .map(() => Array(cols).fill(this.#emptyCell));
+    this.board = new Array(rows).fill().map(() =>
+      Array(cols)
+        .fill(null)
+        .map(() => ({
+          shipIndex: null,
+          cellStatus: "O",
+          ship: null,
+        })),
+    );
   }
 
-  receiveAttack(row, col) {}
+  receiveAttack(row, col) {
+    const cell = this.board[row][col];
+    if (cell.cellStatus === "H" || cell.cellStatus === "M") return false;
+    if (cell.ship) {
+      // is a hit
+      cell.cellStatus = "H";
+      cell.ship.hit();
+    } else {
+      // is a miss
+      cell.cellStatus = "M";
+    }
+    return cell.cellStatus;
+  }
 
   /**
    *
@@ -49,7 +62,11 @@ class Gameboard {
     if (shipIndex > -1) {
       // reset the previous coords and set the new coords
       for (let coord of this.ships[shipIndex].coordArr) {
-        this.board[coord[0]][coord[1]] = this.#emptyCell;
+        this.board[coord[0]][coord[1]] = {
+          shipIndex: null,
+          cellStatus: "O",
+          ship: null,
+        };
       }
       this.ships[shipIndex].coordArr = coordArr;
     } else {
