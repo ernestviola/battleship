@@ -26,41 +26,43 @@ test("can create a gameboard", () => {
 test("can place a ship", () => {
   const ship_length_4 = new Ship(4);
   const game = new Gameboard();
+  const coordArr = [
+    [0, 0],
+    [0, 1],
+    [0, 2],
+    [0, 3],
+  ];
+  const base = {
+    shipIndex: null,
+    cellStatus: "O",
+    ship: null,
+  };
+  const ship = {
+    shipIndex: 0,
+    cellStatus: "S",
+    ship: ship_length_4,
+  };
 
-  expect(
-    game.placeShip(
-      [
-        [0, 0],
-        [0, 1],
-        [0, 2],
-        [0, 3],
-      ],
-      ship_length_4,
-    ),
-  ).toBe(true);
+  expect(game.placeShip(coordArr, ship_length_4)).toBe(true);
 
-  expect(game.ships[0]).toBe(ship_length_4);
+  expect(game.ships[0]).toStrictEqual({
+    ship: ship_length_4,
+    coordArr: coordArr,
+  });
 
-  expect(game.board[0][0]).toStrictEqual({
-    shipIndex: 0,
-    cellStatus: "S",
-    ship: ship_length_4,
-  });
-  expect(game.board[0][1]).toStrictEqual({
-    shipIndex: 0,
-    cellStatus: "S",
-    ship: ship_length_4,
-  });
-  expect(game.board[0][2]).toStrictEqual({
-    shipIndex: 0,
-    cellStatus: "S",
-    ship: ship_length_4,
-  });
-  expect(game.board[0][3]).toStrictEqual({
-    shipIndex: 0,
-    cellStatus: "S",
-    ship: ship_length_4,
-  });
+  expect(game.board).toStrictEqual([
+    //0     1     2     3     4     5     6     7     8     9
+    [ship, ship, ship, ship, base, base, base, base, base, base], // 0
+    [base, base, base, base, base, base, base, base, base, base], // 1
+    [base, base, base, base, base, base, base, base, base, base], // 2
+    [base, base, base, base, base, base, base, base, base, base], // 3
+    [base, base, base, base, base, base, base, base, base, base], // 4
+    [base, base, base, base, base, base, base, base, base, base], // 5
+    [base, base, base, base, base, base, base, base, base, base], // 6
+    [base, base, base, base, base, base, base, base, base, base], // 7
+    [base, base, base, base, base, base, base, base, base, base], // 8
+    [base, base, base, base, base, base, base, base, base, base], // 9
+  ]);
 });
 
 test("can't place a ship that doesn't have the same number of coords as its length", () => {
@@ -91,7 +93,163 @@ test("can't place a ship that doesn't have the same number of coords as its leng
   ).toBe(false);
 });
 
-test.skip("can't place ship on occupied space", () => {});
+test("can't place ship on occupied space", () => {
+  const ship_length_4 = new Ship(4);
+  const ship_length_4_coord = [
+    [0, 0],
+    [0, 1],
+    [0, 2],
+    [0, 3],
+  ];
+  const ship_length_6 = new Ship(6);
+  const ship_length_6_coord = [
+    [0, 0],
+    [1, 0],
+    [2, 0],
+    [3, 0],
+    [4, 0],
+    [5, 0],
+  ];
+  const game = new Gameboard();
+  expect(game.placeShip(ship_length_4_coord, ship_length_4)).toBe(true);
+  expect(game.placeShip(ship_length_6_coord, ship_length_6)).toBe(false);
+  const base = {
+    shipIndex: null,
+    cellStatus: "O",
+    ship: null,
+  };
+  const ship = {
+    shipIndex: 0,
+    cellStatus: "S",
+    ship: ship_length_4,
+  };
+  expect(game.board).toStrictEqual([
+    //0     1     2     3     4     5     6     7     8     9
+    [ship, ship, ship, ship, base, base, base, base, base, base], // 0
+    [base, base, base, base, base, base, base, base, base, base], // 1
+    [base, base, base, base, base, base, base, base, base, base], // 2
+    [base, base, base, base, base, base, base, base, base, base], // 3
+    [base, base, base, base, base, base, base, base, base, base], // 4
+    [base, base, base, base, base, base, base, base, base, base], // 5
+    [base, base, base, base, base, base, base, base, base, base], // 6
+    [base, base, base, base, base, base, base, base, base, base], // 7
+    [base, base, base, base, base, base, base, base, base, base], // 8
+    [base, base, base, base, base, base, base, base, base, base], // 9
+  ]);
+  expect(game.ships.length).toBe(1);
+});
 
-test.skip("can move an already placed ship", () => {});
-test.skip("can move an already placed ship to a spot that contains one or more of its previous coords", () => {});
+test("can move an already placed ship", () => {
+  const ship_length_4 = new Ship(4);
+  const ship_length_4_coord_1 = [
+    [0, 0],
+    [0, 1],
+    [0, 2],
+    [0, 3],
+  ];
+  const ship_length_4_coord_2 = [
+    [3, 0],
+    [3, 1],
+    [3, 2],
+    [3, 3],
+  ];
+  const base = {
+    shipIndex: null,
+    cellStatus: "O",
+    ship: null,
+  };
+  const ship = {
+    shipIndex: 0,
+    cellStatus: "S",
+    ship: ship_length_4,
+  };
+  const game = new Gameboard();
+  expect(game.placeShip(ship_length_4_coord_1, ship_length_4)).toBe(true);
+  expect(game.board).toStrictEqual([
+    //0     1     2     3     4     5     6     7     8     9
+    [ship, ship, ship, ship, base, base, base, base, base, base], // 0
+    [base, base, base, base, base, base, base, base, base, base], // 1
+    [base, base, base, base, base, base, base, base, base, base], // 2
+    [base, base, base, base, base, base, base, base, base, base], // 3
+    [base, base, base, base, base, base, base, base, base, base], // 4
+    [base, base, base, base, base, base, base, base, base, base], // 5
+    [base, base, base, base, base, base, base, base, base, base], // 6
+    [base, base, base, base, base, base, base, base, base, base], // 7
+    [base, base, base, base, base, base, base, base, base, base], // 8
+    [base, base, base, base, base, base, base, base, base, base], // 9
+  ]);
+  expect(game.ships.length).toBe(1);
+
+  expect(game.placeShip(ship_length_4_coord_2, ship_length_4)).toBe(true);
+  expect(game.board).toStrictEqual([
+    //0     1     2     3     4     5     6     7     8     9
+    [base, base, base, base, base, base, base, base, base, base], // 0
+    [base, base, base, base, base, base, base, base, base, base], // 1
+    [base, base, base, base, base, base, base, base, base, base], // 2
+    [ship, ship, ship, ship, base, base, base, base, base, base], // 3
+    [base, base, base, base, base, base, base, base, base, base], // 4
+    [base, base, base, base, base, base, base, base, base, base], // 5
+    [base, base, base, base, base, base, base, base, base, base], // 6
+    [base, base, base, base, base, base, base, base, base, base], // 7
+    [base, base, base, base, base, base, base, base, base, base], // 8
+    [base, base, base, base, base, base, base, base, base, base], // 9
+  ]);
+  expect(game.ships.length).toBe(1);
+});
+test("can move an already placed ship to a spot that contains one or more of its previous coords", () => {
+  const ship_length_4 = new Ship(4);
+  const ship_length_4_coord_1 = [
+    [0, 0],
+    [0, 1],
+    [0, 2],
+    [0, 3],
+  ];
+  const ship_length_4_coord_2 = [
+    [0, 0],
+    [1, 0],
+    [2, 0],
+    [3, 0],
+  ];
+  const base = {
+    shipIndex: null,
+    cellStatus: "O",
+    ship: null,
+  };
+  const ship = {
+    shipIndex: 0,
+    cellStatus: "S",
+    ship: ship_length_4,
+  };
+  const game = new Gameboard();
+  expect(game.placeShip(ship_length_4_coord_1, ship_length_4)).toBe(true);
+  expect(game.board).toStrictEqual([
+    //0     1     2     3     4     5     6     7     8     9
+    [ship, ship, ship, ship, base, base, base, base, base, base], // 0
+    [base, base, base, base, base, base, base, base, base, base], // 1
+    [base, base, base, base, base, base, base, base, base, base], // 2
+    [base, base, base, base, base, base, base, base, base, base], // 3
+    [base, base, base, base, base, base, base, base, base, base], // 4
+    [base, base, base, base, base, base, base, base, base, base], // 5
+    [base, base, base, base, base, base, base, base, base, base], // 6
+    [base, base, base, base, base, base, base, base, base, base], // 7
+    [base, base, base, base, base, base, base, base, base, base], // 8
+    [base, base, base, base, base, base, base, base, base, base], // 9
+  ]);
+  expect(game.ships.length).toBe(1);
+
+  expect(game.placeShip(ship_length_4_coord_2, ship_length_4)).toBe(true);
+  expect(game.board).toStrictEqual([
+    //0     1     2     3     4     5     6     7     8     9
+    [ship, base, base, base, base, base, base, base, base, base], // 0
+    [ship, base, base, base, base, base, base, base, base, base], // 1
+    [ship, base, base, base, base, base, base, base, base, base], // 2
+    [ship, base, base, base, base, base, base, base, base, base], // 3
+    [base, base, base, base, base, base, base, base, base, base], // 4
+    [base, base, base, base, base, base, base, base, base, base], // 5
+    [base, base, base, base, base, base, base, base, base, base], // 6
+    [base, base, base, base, base, base, base, base, base, base], // 7
+    [base, base, base, base, base, base, base, base, base, base], // 8
+    [base, base, base, base, base, base, base, base, base, base], // 9
+  ]);
+  expect(game.ships.length).toBe(1);
+});

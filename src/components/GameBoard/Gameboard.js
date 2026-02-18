@@ -1,7 +1,7 @@
 /**
  * S = ship
  * O = open
- * X = ship hit
+ * H = ship hit
  * M = miss
  */
 
@@ -26,7 +26,7 @@ class Gameboard {
       .map(() => Array(cols).fill(this.#emptyCell));
   }
 
-  receiveAttack(x, y) {}
+  receiveAttack(row, col) {}
 
   /**
    *
@@ -35,8 +35,33 @@ class Gameboard {
    */
   placeShip(coordArr, ship) {
     if (coordArr.length !== ship.length) return false;
+
+    // check coordinates if all are open & not self
+    for (let coord of coordArr) {
+      if (
+        this.board[coord[0]][coord[1]].cellStatus !== "O" &&
+        this.board[coord[0]][coord[1]].ship !== ship
+      )
+        return false;
+    }
+    let shipIndex = this.ships.findIndex((obj) => obj.ship === ship);
+
+    if (shipIndex > -1) {
+      // reset the previous coords and set the new coords
+      for (let coord of this.ships[shipIndex].coordArr) {
+        this.board[coord[0]][coord[1]] = this.#emptyCell;
+      }
+      this.ships[shipIndex].coordArr = coordArr;
+    } else {
+      // new ship
+      shipIndex =
+        this.ships.push({
+          ship,
+          coordArr,
+        }) - 1;
+    }
+
     // push returns the new length of the array so we subtract 1 to get the index
-    const shipIndex = this.ships.push(ship) - 1;
     for (let coord of coordArr) {
       this.board[coord[0]][coord[1]] = {
         shipIndex,
