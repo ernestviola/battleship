@@ -1,3 +1,3 @@
-# Webpack template
+# Battleship
 
-A simple webpack template made by Ernest Viola to quickly start new projects.
+The Game
