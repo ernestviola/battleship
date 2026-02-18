@@ -286,3 +286,22 @@ test("cant attack a target twice", () => {
   //test hit
   //test miss
 });
+
+test("can sink a ship", () => {
+  const game = new Gameboard();
+  const ship_length_4 = new Ship(4);
+  const ship_length_4_coord = [
+    [0, 0],
+    [0, 1],
+    [0, 2],
+    [0, 3],
+  ];
+  game.placeShip(ship_length_4_coord, ship_length_4);
+  expect(game.isAllShipsSunk()).toBe(false);
+  expect(game.receiveAttack(0, 0)).toBe("H");
+  expect(game.receiveAttack(0, 1)).toBe("H");
+  expect(game.receiveAttack(0, 2)).toBe("H");
+  expect(game.receiveAttack(0, 3)).toBe("H");
+  expect(game.ships[0].ship.isSunk()).toBe(true);
+  expect(game.isAllShipsSunk()).toBe(true);
+});

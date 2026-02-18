@@ -89,7 +89,14 @@ class Gameboard {
     return true;
   }
 
-  isAllShipsSunk() {}
+  placeShipRandom() {}
+
+  isAllShipsSunk() {
+    const shipsRemaining = this.ships.filter(
+      (cellObj) => !cellObj.ship.isSunk(),
+    );
+    return shipsRemaining.length === 0;
+  }
 
   printBoard() {
     this.board.array.forEach((row) => {
