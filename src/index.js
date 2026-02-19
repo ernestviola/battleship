@@ -1,3 +1,4 @@
+import Gameboard from "./components/GameBoard/Gameboard";
 import "./styles.css";
 
 /**
@@ -8,3 +9,24 @@ import "./styles.css";
  *
  *
  */
+
+const player_1_board = new Gameboard();
+
+refreshGameboard(player_1_board);
+
+function refreshGameboard(gameboard) {
+  const gameboardEl = document.getElementById("gameboard");
+  for (let i = 0; i < gameboard.board.length; i++) {
+    // populate the rows
+    const currentRowEl = document.createElement("div");
+    currentRowEl.className = "row";
+    for (let j = 0; j < gameboard.board[i].length; j++) {
+      const currentColEl = document.createElement("div");
+      currentColEl.id = `cell(${i},${j})`;
+      currentColEl.className = "cell";
+      currentRowEl.appendChild(currentColEl);
+    }
+    gameboardEl.appendChild(currentRowEl);
+  }
+  return "gameboard";
+}

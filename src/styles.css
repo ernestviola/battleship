@@ -68,3 +68,27 @@ h6 {
 #__next {
   isolation: isolate;
 }
+
+.gameboard {
+  margin: 0 auto;
+  width: fit-content;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.cell {
+  height: 50px;
+  width: 50px;
+  border: 1px solid black;
+}
+
+.cell:not(:last-child) {
+  border-right: none;
+}
+
+.row:not(:first-child) > .cell {
+  border-top: none;
+}
