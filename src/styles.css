@@ -84,20 +84,19 @@ h6 {
   cursor: pointer;
   height: 50px;
   width: 50px;
-  border-right: 1px solid black;
-  border-bottom: 1px solid black;
+  border-right: 1px solid rgb(133, 133, 133);
+  border-bottom: 1px solid rgb(133, 133, 133);
 }
 
 .cell:nth-child(1) {
-  border-left: 1px solid black;
+  border-left: 1px solid rgb(133, 133, 133);
 }
 
 .row:first-child > .cell {
-  border-top: 1px solid black;
+  border-top: 1px solid rgb(133, 133, 133);
 }
 
 .ship {
-  background-color: rgba(141, 198, 255, 0.626);
   position: absolute;
   cursor: grab;
 }

@@ -8,15 +8,8 @@ let draggedShip = null;
 let offsetX;
 let offsetY;
 let currentGameboard;
-/**
- * On Load I want to create a gameboard to be added to the gameboard div
- * I should be able to move the populated "ships"
- * I should be able to randomly set the ships as well
- *
- */
 
 const player_1_board = new Gameboard();
-
 const player_1_ships = createShips();
 
 player_1_ships.forEach((ship) => {
@@ -78,7 +71,14 @@ function setupGameboard(gameboard) {
     const cell = e.target.closest(".cell");
     if (!cell) return;
     let [row, col] = cell.id.split(",");
-    cell.innerText = gameboard.receiveAttack(row, col);
+    switch (gameboard.receiveAttack(row, col)) {
+      case "M":
+        cell.style.backgroundColor = "rgba(255, 233, 122, 0.75)";
+        break;
+      case "H":
+        cell.style.backgroundColor = "rgba(240, 10, 10, 0.63)";
+        break;
+    }
   });
 }
 
@@ -93,7 +93,6 @@ function renderGameboard(gameboard) {
       const currentColEl = document.createElement("div");
       currentColEl.id = `${row},${col}`;
       currentColEl.className = "cell";
-      currentColEl.innerText = gameboard.board[row][col].cellStatus;
       currentRowEl.appendChild(currentColEl);
     }
     gameboardEl.appendChild(currentRowEl);

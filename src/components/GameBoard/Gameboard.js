@@ -49,6 +49,8 @@ class Gameboard {
   placeShip(coordArr, ship) {
     if (coordArr.length !== ship.length) return false;
 
+    let shipIndex = this.#resetShipPlacement(ship);
+
     // check coordinates if all are open & not self
     for (let coord of coordArr) {
       if (coord[0] < 0 || coord[0] >= this.board.length) return false;
@@ -60,20 +62,10 @@ class Gameboard {
         return false;
     }
     coordArr.sort((a, b) => (a[0] - b[0] !== 0 ? a[0] - b[0] : a[1] - b[1]));
-    let shipIndex = this.ships.findIndex((obj) => obj.ship === ship);
 
-    if (shipIndex > -1) {
-      // reset the previous coords and set the new coords
-      for (let coord of this.ships[shipIndex].coordArr) {
-        this.board[coord[0]][coord[1]] = {
-          shipIndex: null,
-          cellStatus: "O",
-          ship: null,
-        };
-      }
+    if (shipIndex) {
       this.ships[shipIndex].coordArr = coordArr;
     } else {
-      // new ship
       shipIndex =
         this.ships.push({
           ship,
@@ -134,6 +126,23 @@ class Gameboard {
       const row = element.map((e) => e.cellStatus).join(" ");
       console.log(row);
     });
+  }
+
+  #resetShipPlacement(ship) {
+    let shipIndex = this.ships.findIndex((obj) => obj.ship === ship);
+
+    if (shipIndex > -1) {
+      // reset the previous coords and set the new coords
+      for (let coord of this.ships[shipIndex].coordArr) {
+        this.board[coord[0]][coord[1]] = {
+          shipIndex: null,
+          cellStatus: "O",
+          ship: null,
+        };
+      }
+      return shipIndex;
+    }
+    return false;
   }
 }
 
