@@ -72,6 +72,7 @@ h6 {
 .gameboard {
   margin: 0 auto;
   width: fit-content;
+  position: relative;
 }
 
 .row {
@@ -80,15 +81,23 @@ h6 {
 }
 
 .cell {
+  cursor: pointer;
   height: 50px;
   width: 50px;
-  border: 1px solid black;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
 }
 
-.cell:not(:last-child) {
-  border-right: none;
+.cell:nth-child(1) {
+  border-left: 1px solid black;
 }
 
-.row:not(:first-child) > .cell {
-  border-top: none;
+.row:first-child > .cell {
+  border-top: 1px solid black;
+}
+
+.ship {
+  background-color: rgba(141, 198, 255, 0.626);
+  position: absolute;
+  cursor: grab;
 }

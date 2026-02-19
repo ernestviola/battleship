@@ -59,6 +59,7 @@ class Gameboard {
       )
         return false;
     }
+    coordArr.sort((a, b) => (a[0] - b[0] !== 0 ? a[0] - b[0] : a[1] - b[1]));
     let shipIndex = this.ships.findIndex((obj) => obj.ship === ship);
 
     if (shipIndex > -1) {
