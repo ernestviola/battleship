@@ -2,9 +2,12 @@ import Gameboard from "./components/GameBoard/Gameboard";
 import Ship from "./components/Ship/Ship";
 import "./styles.css";
 
+const cellSize = 50;
 let isDragging = false;
 let draggedShip = null;
-
+let offsetX;
+let offsetY;
+let currentGameboard;
 /**
  * On Load I want to create a gameboard to be added to the gameboard div
  * I should be able to move the populated "ships"
@@ -20,8 +23,54 @@ player_1_ships.forEach((ship) => {
   player_1_board.placeShipRandom(ship);
 });
 
-setupGameboard(player_1_board);
-renderGameboard(player_1_board);
+currentGameboard = player_1_board;
+
+setupGameboard(currentGameboard);
+renderGameboard(currentGameboard);
+
+setupShipDragAndDrop();
+
+function setupShipDragAndDrop() {
+  document.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+
+    const gameboard = document.getElementById("gameboard");
+    const gameboardRect = gameboard.getBoundingClientRect();
+
+    draggedShip.style.left = `${e.clientX - gameboardRect.left - offsetX}px`;
+    draggedShip.style.top = `${e.clientY - gameboardRect.top - offsetY}px`;
+  });
+
+  document.addEventListener("mouseup", (e) => {
+    if (!isDragging) return;
+    isDragging = false;
+
+    const gameboard = document.getElementById("gameboard");
+    const gameboardRect = gameboard.getBoundingClientRect();
+    const shipRect = draggedShip.getBoundingClientRect();
+
+    const newCol = Math.floor((shipRect.left + 25 - gameboardRect.left) / 50);
+    const newRow = Math.floor((shipRect.top + 25 - gameboardRect.top) / 50);
+
+    const shipObj = currentGameboard.ships[draggedShip.dataset.shipIndex];
+    const firstCell = shipObj.coordArr[0];
+    const offsetX = firstCell[0] - newRow;
+    const offsetY = firstCell[1] - newCol;
+
+    // // calculate the potential array
+    const newCoordArr = [];
+    for (let coord of shipObj.coordArr) {
+      newCoordArr.push([coord[0] - offsetX, coord[1] - offsetY]);
+    }
+
+    if (currentGameboard.placeShip(newCoordArr, shipObj.ship)) {
+      renderShip(draggedShip, newCoordArr);
+    }
+
+    draggedShip.style.cursor = "grab";
+    draggedShip = null;
+  });
+}
 
 function setupGameboard(gameboard) {
   const gameboardEl = document.getElementById("gameboard");
@@ -60,10 +109,25 @@ function renderGameboard(gameboard) {
 }
 
 function createShipElement(coordArr, shipIndex, color) {
-  const cellSize = 50;
   const shipEl = document.createElement("div");
   shipEl.className = "ship";
   shipEl.dataset.shipIndex = shipIndex;
+
+  renderShip(shipEl, coordArr);
+  shipEl.style.backgroundColor = color;
+  shipEl.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    draggedShip = e.target;
+    shipEl.style.cursor = "grabbing";
+
+    const rect = shipEl.getBoundingClientRect();
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+  });
+  return shipEl;
+}
+
+function renderShip(shipEl, coordArr) {
   const isHorizontal = coordArr[0][0] === coordArr[coordArr.length - 1][0];
   let width = null;
   let height = null;
@@ -74,13 +138,10 @@ function createShipElement(coordArr, shipIndex, color) {
     width = cellSize;
     height = coordArr.length * cellSize;
   }
-
   shipEl.style.top = `${coordArr[0][0] * cellSize}px`;
   shipEl.style.left = `${coordArr[0][1] * cellSize}px`;
   shipEl.style.width = `${width}px`;
   shipEl.style.height = `${height}px`;
-  shipEl.style.backgroundColor = color;
-  return shipEl;
 }
 
 function createShips() {
