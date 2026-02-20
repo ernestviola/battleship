@@ -1,6 +1,4 @@
-import Gameboard from "./components/GameBoard/Gameboard";
-import Ship from "./components/Ship/Ship";
-import Player from "./components/Player/Player";
+import Ship from "../models/Ship/Ship.js";
 
 const cellSize = 50;
 document.documentElement.style.setProperty("--cell-size", `${cellSize}px`);
@@ -11,132 +9,10 @@ let offsetX;
 let offsetY;
 let currentGameboard;
 
-const gameContainer = document.getElementById("game-container");
 setupShipDragAndDrop();
 
-function loadTitleScreen() {
-  // show a title
-  // 2 options 1-player, 2-player
-}
-
-async function loadPassToPlayerScreen(player) {
-  return new Promise((resolve) => {
-    gameContainer.replaceChildren();
-    const passScreen = document.createElement("div");
-    const title = document.createElement("h1");
-    const startTurnBtn = document.createElement("button");
-
-    passScreen.className = "pass-screen";
-
-    title.innerText = `It's ${player.name}'s Turn`;
-    startTurnBtn.innerText = "Start Turn";
-
-    /**
-     * resolves the promise so we can continue the game loop
-     */
-    startTurnBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      resolve();
-    });
-
-    passScreen.appendChild(title);
-    passScreen.appendChild(startTurnBtn);
-    gameContainer.appendChild(passScreen);
-  });
-}
-
-function loadTwoPlayerEndScreen() {}
-
-async function twoPlayerGame() {
-  const player_1 = new Player(new Gameboard(), "Player 1");
-  createShips().forEach((ship) => {
-    player_1.gameboard.placeShipRandom(ship);
-  });
-
-  const player_2 = new Player(new Gameboard(), "Player 2");
-  createShips().forEach((ship) => {
-    player_2.gameboard.placeShipRandom(ship);
-  });
-
-  const playersArr = [];
-  playersArr.push(player_1);
-  playersArr.push(player_2);
-
-  for (let player of playersArr) {
-    // show next turn screen
-    await loadPassToPlayerScreen(player);
-    await renderGameSetupPlayerView(player);
-  }
-
-  let turnCounter = Math.floor(Math.random() * 2);
-
-  while (
-    !playersArr.some((player) => {
-      player.gameboard.isAllShipsSunk();
-    })
-  ) {
-    // show next turn screen
-    await loadPassToPlayerScreen(playersArr[turnCounter % playersArr.length]);
-    await renderGameStartPlayerView(
-      playersArr[turnCounter % playersArr.length],
-      playersArr[(turnCounter + 1) % playersArr.length],
-    );
-    turnCounter++;
-  }
-
-  // show winner and give an option for a new game / return to title
-}
-
-async function renderGameSetupPlayerView(player) {
-  // Set Board Button
-  return new Promise((resolve) => {
-    gameContainer.replaceChildren();
-    const gameSetupEl = document.createElement("div");
-    gameSetupEl.className = "game-setup-view";
-    currentGameboard = player.gameboard;
-    const playerBoard = renderGameboard(player.gameboard, false);
-    const title = document.createElement("h1");
-    const setBtn = document.createElement("button");
-
-    title.innerText = `Move your pieces ${player.name}!`;
-    setBtn.innerText = "Set";
-    setBtn.ariaLabel = "Set Board";
-    setBtn.className = "set";
-
-    setBtn.addEventListener("click", () => {
-      player.gameboard.saved = true;
-      resolve();
-    });
-
-    gameSetupEl.appendChild(title);
-    gameSetupEl.appendChild(playerBoard);
-    gameSetupEl.appendChild(setBtn);
-    gameContainer.appendChild(gameSetupEl);
-  });
-}
-
-async function renderGameStartPlayerView(player, opponent) {
-  return new Promise((resolve) => {
-    gameContainer.replaceChildren();
-    currentGameboard = player.gameboard;
-    const twoPlayerGameEl = document.createElement("div");
-    const gameBoardsContainer = document.createElement("div");
-    const title = document.createElement("h1");
-
-    const playerBoard = renderGameboard(player.gameboard, false);
-    const opponentBoard = renderGameboard(opponent.gameboard, true, resolve);
-
-    title.innerText = `${player.name}'s Turn`;
-
-    twoPlayerGameEl.className = "two-player-game";
-    gameBoardsContainer.className = "gameboards-container";
-
-    twoPlayerGameEl.appendChild(title);
-    gameBoardsContainer.appendChild(playerBoard);
-    gameBoardsContainer.appendChild(opponentBoard);
-    twoPlayerGameEl.appendChild(gameBoardsContainer);
-    gameContainer.appendChild(twoPlayerGameEl);
-  });
+function setGameboard(gameboard) {
+  currentGameboard = gameboard;
 }
 
 function setupShipDragAndDrop() {
@@ -219,6 +95,7 @@ function renderGameboard(gameboard, hideShips, resolve) {
       currentColEl.id = `${row},${col}`;
       currentColEl.className = "cell";
       currentColEl.style.cursor = resolve ? "pointer" : "default";
+
       switch (gameboard.board[row][col].cellStatus) {
         case "M":
           currentColEl.style.backgroundColor = "rgba(255, 233, 122, 0.75)";
@@ -233,6 +110,9 @@ function renderGameboard(gameboard, hideShips, resolve) {
     gameboardEl.appendChild(currentRowEl);
   }
 
+  /**
+   * we only pass in a resolve when the game has started
+   */
   if (resolve) {
     gameboardEl.addEventListener("click", (e) => {
       const cell = e.target.closest(".cell");
@@ -330,4 +210,4 @@ function createShips() {
   return shipArr;
 }
 
-export { twoPlayerGame };
+export { createShips, renderGameboard, setGameboard };

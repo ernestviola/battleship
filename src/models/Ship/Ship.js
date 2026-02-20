@@ -16,6 +16,9 @@ class Ship {
 
   hit() {
     this.#hit++;
+    if (this.isSunk()) {
+      this.color = "rgb(76, 76, 76)";
+    }
   }
 
   isSunk() {
