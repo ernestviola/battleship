@@ -104,6 +104,7 @@ body {
 .gameboard {
   position: relative;
   background-color: white;
+  width: fit-content;
 }
 
 .row {

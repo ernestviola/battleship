@@ -40,38 +40,23 @@ async function twoPlayerGame() {
   playersArr.push(player_1);
   playersArr.push(player_2);
 
-  for (let player of playersArr) {
-    await renderGameSetupPlayerView(player);
-  }
-
   let turnCounter = Math.floor(Math.random() * 2);
+  gameStarted = true;
 
   while (
-    !player_1.gameboard.isAllShipsSunk() &&
-    !player_2.gameboard.isAllShipsSunk()
+    !playersArr.some((player) => {
+      player.gameboard.isAllShipsSunk();
+    })
   ) {
     // show next turn screen
     await renderGameStartPlayerView(
-      playersArr[turnCounter],
+      playersArr[turnCounter % playersArr.length],
       playersArr[(turnCounter + 1) % playersArr.length],
     );
+    turnCounter++;
   }
-}
 
-async function renderGameStartPlayerView(player, opponent) {
-  return new Promise((resolve) => {
-    gameContainer.replaceChildren();
-    gameStarted = true;
-    currentGameboard = player.gameboard;
-    const title = document.createElement("h1");
-    title.innerText = `${player.name}'s Turn`;
-    const playerBoard = renderGameboard(player.gameboard, false);
-    const opponentBoard = renderGameboard(opponent.gameboard, true, resolve);
-
-    gameContainer.appendChild(title);
-    gameContainer.appendChild(playerBoard);
-    gameContainer.appendChild(opponentBoard);
-  });
+  // show winner and give an option for a new game / return to title
 }
 
 async function renderGameSetupPlayerView(player) {
@@ -100,6 +85,21 @@ async function renderGameSetupPlayerView(player) {
     gameSetupEl.appendChild(playerBoard);
     gameSetupEl.appendChild(setBtn);
     gameContainer.appendChild(gameSetupEl);
+  });
+}
+
+async function renderGameStartPlayerView(player, opponent) {
+  return new Promise((resolve) => {
+    gameContainer.replaceChildren();
+    currentGameboard = player.gameboard;
+    const title = document.createElement("h1");
+    title.innerText = `${player.name}'s Turn`;
+    const playerBoard = renderGameboard(player.gameboard, false);
+    const opponentBoard = renderGameboard(opponent.gameboard, true, resolve);
+
+    gameContainer.appendChild(title);
+    gameContainer.appendChild(playerBoard);
+    gameContainer.appendChild(opponentBoard);
   });
 }
 
@@ -175,27 +175,31 @@ function renderGameboard(gameboard, hideShips, resolve) {
       const currentColEl = document.createElement("div");
       currentColEl.id = `${row},${col}`;
       currentColEl.className = "cell";
+      switch (gameboard.board[row][col].cellStatus) {
+        case "M":
+          currentColEl.style.backgroundColor = "rgba(255, 233, 122, 0.75)";
+          break;
+        case "H":
+          currentColEl.style.backgroundColor = "rgba(240, 10, 10, 0.63)";
+          break;
+      }
+
       currentRowEl.appendChild(currentColEl);
     }
     gameboardEl.appendChild(currentRowEl);
   }
-  gameboardEl.addEventListener("click", (e) => {
-    if (!gameStarted) return;
-    const cell = e.target.closest(".cell");
-    if (!cell) return;
-    let [row, col] = cell.id.split(",");
-    switch (gameboard.receiveAttack(row, col)) {
-      case "M":
-        cell.style.backgroundColor = "rgba(255, 233, 122, 0.75)";
-        break;
-      case "H":
-        cell.style.backgroundColor = "rgba(240, 10, 10, 0.63)";
-        break;
-    }
-    if (hideShips) {
-      resolve();
-    }
-  });
+  if (resolve) {
+    gameboardEl.addEventListener("click", (e) => {
+      if (!gameStarted) return;
+      const cell = e.target.closest(".cell");
+      if (!cell) return;
+      let [row, col] = cell.id.split(",");
+      if (gameboard.receiveAttack(row, col)) {
+        resolve();
+      }
+    });
+  }
+
   if (!hideShips) {
     for (let i = 0; i < gameboard.ships.length; i++) {
       const shipEl = createShipElement(
