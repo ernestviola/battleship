@@ -10,6 +10,7 @@ import Ship from "../Ship/Ship.js";
 class Gameboard {
   board = null;
   ships = [];
+  saved = false;
   /**
    *
    * @param {Number} rows Number of rows on the board
@@ -47,6 +48,7 @@ class Gameboard {
    * @param {Ship} ship Takes a ship object from Ship.js
    */
   placeShip(coordArr, ship) {
+    if (this.saved) return false;
     if (coordArr.length !== ship.length) return false;
 
     let shipIndex = this.#resetShipPlacement(ship);
@@ -61,19 +63,22 @@ class Gameboard {
       )
         return false;
     }
+
     coordArr.sort((a, b) => (a[0] - b[0] !== 0 ? a[0] - b[0] : a[1] - b[1]));
 
-    if (shipIndex) {
+    if (typeof shipIndex === "number") {
       this.ships[shipIndex].coordArr = coordArr;
+
+      this.ships[shipIndex].onBoard = true;
     } else {
       shipIndex =
         this.ships.push({
           ship,
           coordArr,
+          onBoard: true,
         }) - 1;
     }
 
-    // push returns the new length of the array so we subtract 1 to get the index
     for (let coord of coordArr) {
       this.board[coord[0]][coord[1]] = {
         shipIndex,
@@ -114,6 +119,24 @@ class Gameboard {
     }
   }
 
+  rotateShip(ship) {
+    const shipObj = this.ships.find((shipObj) => shipObj.ship === ship);
+    if (!shipObj) return false;
+    const coordArr = shipObj.coordArr;
+    const newCoordArr = [];
+    newCoordArr.push(coordArr[0]);
+    const isHorizontal = coordArr[0][0] === coordArr[coordArr.length - 1][0];
+    for (let i = 1; i < ship.length; i++) {
+      newCoordArr.push(
+        isHorizontal
+          ? [newCoordArr[0][0] + i, newCoordArr[0][1]]
+          : [newCoordArr[0][0], newCoordArr[0][1] + i],
+      );
+    }
+
+    return this.placeShip(newCoordArr, ship);
+  }
+
   isAllShipsSunk() {
     const shipsRemaining = this.ships.filter(
       (cellObj) => !cellObj.ship.isSunk(),
@@ -140,6 +163,7 @@ class Gameboard {
           ship: null,
         };
       }
+      this.ships[shipIndex].onBoard = false;
       return shipIndex;
     }
     return false;
