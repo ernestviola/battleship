@@ -1,6 +1,7 @@
 import { defineConfig } from "eslint/config";
 import js from "@eslint/js";
 import jestPlugin from "eslint-plugin-jest";
+import globals from "globals";
 
 export default defineConfig([
   {
@@ -17,6 +18,8 @@ export default defineConfig([
     languageOptions: {
       globals: {
         console: "readonly",
+        ...globals.browser,
+        ...globals.node,
       },
     },
   },

@@ -19,7 +19,7 @@ function loadTitleScreen() {
   // 2 options 1-player, 2-player
 }
 
-async function loadPassToPlayer(player) {
+async function loadPassToPlayerScreen(player) {
   return new Promise((resolve) => {
     gameContainer.replaceChildren();
     const passScreen = document.createElement("div");
@@ -37,6 +37,8 @@ async function loadPassToPlayer(player) {
     gameContainer.appendChild(passScreen);
   });
 }
+
+function loadTwoPlayerEndScreen() {}
 
 async function twoPlayerGame() {
   const player_1 = new Player(new Gameboard(), "Player 1");
@@ -66,7 +68,7 @@ async function twoPlayerGame() {
     })
   ) {
     // show next turn screen
-    await loadPassToPlayer(playersArr[turnCounter % playersArr.length]);
+    await loadPassToPlayerScreen(playersArr[turnCounter % playersArr.length]);
     await renderGameStartPlayerView(
       playersArr[turnCounter % playersArr.length],
       playersArr[(turnCounter + 1) % playersArr.length],
@@ -197,6 +199,7 @@ function renderGameboard(gameboard, hideShips, resolve) {
       const currentColEl = document.createElement("div");
       currentColEl.id = `${row},${col}`;
       currentColEl.className = "cell";
+      currentColEl.style.cursor = resolve ? "pointer" : "default";
       switch (gameboard.board[row][col].cellStatus) {
         case "M":
           currentColEl.style.backgroundColor = "rgba(255, 233, 122, 0.75)";
@@ -220,7 +223,6 @@ function renderGameboard(gameboard, hideShips, resolve) {
       }
     });
   }
-
   if (!hideShips) {
     for (let i = 0; i < gameboard.ships.length; i++) {
       const shipEl = createShipElement(
@@ -233,8 +235,6 @@ function renderGameboard(gameboard, hideShips, resolve) {
       }
       gameboardEl.appendChild(shipEl);
     }
-  } else {
-    document.documentElement.style.setProperty("--cell-cursor", "pointer");
   }
   return gameboardEl;
 }
@@ -264,7 +264,6 @@ function createShipElement(gameboard, shipIndex, color) {
 
     const ship = gameboard.ships[shipIndex].ship;
     const rotated = gameboard.rotateShip(ship);
-    console.log(rotated);
     if (rotated) {
       renderShip(e.target, gameboard.ships[shipIndex].coordArr, ship.onBoard);
     }

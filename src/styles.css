@@ -130,7 +130,6 @@ button {
 }
 
 .cell {
-  cursor: var(--cell-cursor);
   height: var(--cell-size);
   width: var(--cell-size);
   border-right: 1px solid rgb(133, 133, 133);
