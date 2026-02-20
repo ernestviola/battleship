@@ -23,15 +23,22 @@ async function loadPassToPlayerScreen(player) {
   return new Promise((resolve) => {
     gameContainer.replaceChildren();
     const passScreen = document.createElement("div");
-    passScreen.className = "pass-screen";
     const title = document.createElement("h1");
-    title.innerText = `It's ${player.name}'s Turn`;
     const startTurnBtn = document.createElement("button");
+
+    passScreen.className = "pass-screen";
+
+    title.innerText = `It's ${player.name}'s Turn`;
     startTurnBtn.innerText = "Start Turn";
+
+    /**
+     * resolves the promise so we can continue the game loop
+     */
     startTurnBtn.addEventListener("click", (e) => {
       e.preventDefault();
       resolve();
     });
+
     passScreen.appendChild(title);
     passScreen.appendChild(startTurnBtn);
     gameContainer.appendChild(passScreen);
@@ -55,10 +62,11 @@ async function twoPlayerGame() {
   playersArr.push(player_1);
   playersArr.push(player_2);
 
-  // for (let player of playersArr) {
-  //   // show next turn screen
-  //   await renderGameSetupPlayerView(player);
-  // }
+  for (let player of playersArr) {
+    // show next turn screen
+    await loadPassToPlayerScreen(player);
+    await renderGameSetupPlayerView(player);
+  }
 
   let turnCounter = Math.floor(Math.random() * 2);
 
@@ -110,15 +118,19 @@ async function renderGameSetupPlayerView(player) {
 async function renderGameStartPlayerView(player, opponent) {
   return new Promise((resolve) => {
     gameContainer.replaceChildren();
-    const twoPlayerGameEl = document.createElement("div");
-    twoPlayerGameEl.className = "two-player-game";
     currentGameboard = player.gameboard;
+    const twoPlayerGameEl = document.createElement("div");
+    const gameBoardsContainer = document.createElement("div");
     const title = document.createElement("h1");
-    title.innerText = `${player.name}'s Turn`;
+
     const playerBoard = renderGameboard(player.gameboard, false);
     const opponentBoard = renderGameboard(opponent.gameboard, true, resolve);
-    const gameBoardsContainer = document.createElement("div");
+
+    title.innerText = `${player.name}'s Turn`;
+
+    twoPlayerGameEl.className = "two-player-game";
     gameBoardsContainer.className = "gameboards-container";
+
     twoPlayerGameEl.appendChild(title);
     gameBoardsContainer.appendChild(playerBoard);
     gameBoardsContainer.appendChild(opponentBoard);
@@ -128,6 +140,10 @@ async function renderGameStartPlayerView(player, opponent) {
 }
 
 function setupShipDragAndDrop() {
+  /**
+   * Setup ship movement. We use the coordinates of the closest gameboard to
+   * help calculate the offset needed to place the ship
+   */
   document.addEventListener("mousemove", (e) => {
     if (!isDragging) return;
 
@@ -139,8 +155,7 @@ function setupShipDragAndDrop() {
   });
 
   document.addEventListener("mouseup", (e) => {
-    if (e.button !== 0) return;
-    if (!isDragging) return;
+    if (e.button !== 0 || !isDragging) return;
     isDragging = false;
 
     const gameboardEl = draggedShip.closest(".gameboard");
@@ -154,7 +169,11 @@ function setupShipDragAndDrop() {
       (shipRect.left + 25 - gameboardRect.left) / cellSize,
     );
     const shipObj = currentGameboard.ships[draggedShip.dataset.shipIndex];
-    // check bounds
+
+    /**
+     * if outside the bounds of the gameboard we put the ship back to its last
+     * coordinates
+     */
 
     if (
       newRow < 0 ||
@@ -190,7 +209,7 @@ function setupShipDragAndDrop() {
 function renderGameboard(gameboard, hideShips, resolve) {
   const gameboardEl = document.createElement("div");
   gameboardEl.className = "gameboard";
-  gameboardEl.id = "gameboard";
+
   for (let row = 0; row < gameboard.board.length; row++) {
     // populate the rows
     const currentRowEl = document.createElement("div");
@@ -213,6 +232,7 @@ function renderGameboard(gameboard, hideShips, resolve) {
     }
     gameboardEl.appendChild(currentRowEl);
   }
+
   if (resolve) {
     gameboardEl.addEventListener("click", (e) => {
       const cell = e.target.closest(".cell");
@@ -223,6 +243,7 @@ function renderGameboard(gameboard, hideShips, resolve) {
       }
     });
   }
+
   if (!hideShips) {
     for (let i = 0; i < gameboard.ships.length; i++) {
       const shipEl = createShipElement(
@@ -236,6 +257,7 @@ function renderGameboard(gameboard, hideShips, resolve) {
       gameboardEl.appendChild(shipEl);
     }
   }
+
   return gameboardEl;
 }
 
@@ -268,14 +290,17 @@ function createShipElement(gameboard, shipIndex, color) {
       renderShip(e.target, gameboard.ships[shipIndex].coordArr, ship.onBoard);
     }
   });
+
   return shipEl;
 }
 
 function renderShip(shipEl, coordArr, onBoard = true) {
   if (onBoard) {
     const isHorizontal = coordArr[0][0] === coordArr[coordArr.length - 1][0];
+
     let width = null;
     let height = null;
+
     if (isHorizontal) {
       width = coordArr.length * cellSize;
       height = cellSize;
@@ -283,6 +308,7 @@ function renderShip(shipEl, coordArr, onBoard = true) {
       width = cellSize;
       height = coordArr.length * cellSize;
     }
+
     shipEl.style.top = `${coordArr[0][0] * cellSize}px`;
     shipEl.style.left = `${coordArr[0][1] * cellSize}px`;
     shipEl.style.width = `${width}px`;
