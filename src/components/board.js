@@ -196,18 +196,4 @@ function renderShip(shipEl, coordArr, onBoard = true) {
   }
 }
 
-function createShips() {
-  const shipArr = [];
-  shipArr.push(new Ship(5, "rgba(240, 10, 10, 0.63)"));
-  shipArr.push(new Ship(4, "rgba(255, 176, 92, 0.63)"));
-  shipArr.push(new Ship(3, "rgba(255, 245, 59, 0.63)"));
-  shipArr.push(new Ship(2, "rgba(133, 238, 63, 0.63)"));
-  shipArr.push(new Ship(2, "rgba(16, 241, 215, 0.63)"));
-  shipArr.push(new Ship(1, "rgba(9, 129, 249, 0.63)"));
-  shipArr.push(new Ship(1, "rgba(106, 57, 241, 0.63)"));
-  shipArr.push(new Ship(1, "rgba(251, 61, 182, 0.63)"));
-
-  return shipArr;
-}
-
-export { createShips, renderGameboard, setGameboard };
+export { renderGameboard, setGameboard };

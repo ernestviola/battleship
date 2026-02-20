@@ -1,10 +1,33 @@
-import { renderGameboard, setGameboard } from "../components/board";
+import "../styles.css";
+import { renderGameboard, setGameboard } from "../components/board.js";
 
 const gameContainer = document.getElementById("game-container");
 
-function loadTitleScreen() {
-  // show a title
-  // 2 options 1-player, 2-player
+async function loadTitleScreen() {
+  return new Promise((resolve) => {
+    gameContainer.replaceChildren();
+    const titleScreenEl = document.createElement("div");
+    const title = document.createElement("h1");
+    const btnsEl = document.createElement("div");
+    const singlePlayerBtn = document.createElement("button");
+    const twoPlayerBtn = document.createElement("button");
+
+    singlePlayerBtn.innerText = "1-Player";
+    twoPlayerBtn.innerText = "2-Players";
+    title.textContent = "BATTLESHIP";
+    title.className = "title";
+
+    twoPlayerBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      resolve("twoPlayer");
+    });
+
+    btnsEl.appendChild(singlePlayerBtn);
+    btnsEl.appendChild(twoPlayerBtn);
+    titleScreenEl.appendChild(title);
+    titleScreenEl.appendChild(btnsEl);
+    gameContainer.appendChild(titleScreenEl);
+  });
 }
 
 async function loadPlayerBoardSetupScreen(player) {
@@ -85,7 +108,35 @@ async function loadPassToPlayerScreen(player) {
   });
 }
 
-function loadTwoPlayerEndScreen() {}
+async function loadTwoPlayerEndScreen(player, gameType) {
+  return new Promise((resolve) => {
+    gameContainer.replaceChildren();
+    const endScreenEl = document.createElement("div");
+    const title = document.createElement("h1");
+    const btnsContainer = document.createElement("div");
+    const newGameBtn = document.createElement("button");
+    const titleScreenBtn = document.createElement("button");
+
+    title.innerText = `${player.name} is the Winner!`;
+    titleScreenBtn.innerText = "Title Screen";
+    newGameBtn.innerText = "New Game";
+
+    newGameBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      resolve(gameType);
+    });
+    titleScreenBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      resolve("titleScreen");
+    });
+
+    btnsContainer.appendChild(newGameBtn);
+    btnsContainer.appendChild(titleScreenBtn);
+    endScreenEl.appendChild(title);
+    endScreenEl.appendChild(btnsContainer);
+    gameContainer.appendChild(endScreenEl);
+  });
+}
 
 export {
   loadTitleScreen,
