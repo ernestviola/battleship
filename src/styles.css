@@ -79,11 +79,11 @@ body {
   align-items: center;
 }
 
-.game-setup-view > h1 {
+h1 {
   margin-top: 100px;
 }
 
-.game-setup-view > .gameboard {
+.gameboard {
   margin-top: 40px;
 }
 
@@ -99,6 +99,17 @@ body {
 
 .game-setup-view > button:hover {
   background-color: rgb(202, 202, 4);
+}
+
+.two-player-game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.two-player-game > .gameboards-container {
+  display: flex;
+  gap: 80px;
 }
 
 .gameboard {

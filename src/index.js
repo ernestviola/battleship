@@ -91,15 +91,20 @@ async function renderGameSetupPlayerView(player) {
 async function renderGameStartPlayerView(player, opponent) {
   return new Promise((resolve) => {
     gameContainer.replaceChildren();
+    const twoPlayerGameEl = document.createElement("div");
+    twoPlayerGameEl.className = "two-player-game";
     currentGameboard = player.gameboard;
     const title = document.createElement("h1");
     title.innerText = `${player.name}'s Turn`;
     const playerBoard = renderGameboard(player.gameboard, false);
     const opponentBoard = renderGameboard(opponent.gameboard, true, resolve);
-
-    gameContainer.appendChild(title);
-    gameContainer.appendChild(playerBoard);
-    gameContainer.appendChild(opponentBoard);
+    const gameBoardsContainer = document.createElement("div");
+    gameBoardsContainer.className = "gameboards-container";
+    twoPlayerGameEl.appendChild(title);
+    gameBoardsContainer.appendChild(playerBoard);
+    gameBoardsContainer.appendChild(opponentBoard);
+    twoPlayerGameEl.appendChild(gameBoardsContainer);
+    gameContainer.appendChild(twoPlayerGameEl);
   });
 }
 
