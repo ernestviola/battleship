@@ -73,23 +73,22 @@ body {
   background-color: rgb(0, 87, 248);
 }
 
+h1 {
+  margin-top: 100px;
+}
+
+button {
+  cursor: pointer;
+}
+
 .game-setup-view {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-h1 {
-  margin-top: 100px;
-}
-
-.gameboard {
-  margin-top: 40px;
-}
-
 .game-setup-view > button {
   margin-top: 30px;
-  cursor: pointer;
   font-size: 24px;
   background-color: yellow;
   border: none;
@@ -112,7 +111,14 @@ h1 {
   gap: 80px;
 }
 
+.pass-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .gameboard {
+  margin-top: 40px;
   position: relative;
   background-color: white;
   width: fit-content;
