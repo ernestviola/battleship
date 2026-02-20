@@ -1,6 +1,6 @@
 import "../styles.css";
 
-import Player from "../models/Player/Player.js";
+import { Player, Computer } from "../models/Player/Player.js";
 import Gameboard from "../models/GameBoard/Gameboard.js";
 import Ship from "../models/Ship/Ship.js";
 
@@ -8,12 +8,13 @@ import {
   loadPlayerBoardSetupScreen,
   loadPassToPlayerScreen,
   loadPlayGameScreen,
-  loadTwoPlayerEndScreen,
+  loadGameEndScreen,
   loadTitleScreen,
 } from "../screens/screens.js";
 
 export default async function startGame() {
   let choice = await loadTitleScreen();
+  console.log(choice);
   while (true) {
     if (choice === "twoPlayer") {
       choice = await twoPlayerGame();
@@ -25,7 +26,36 @@ export default async function startGame() {
   }
 }
 
-async function singlePlayerGame() {}
+async function singlePlayerGame() {
+  const player_1 = new Player(new Gameboard(), "Player 1");
+  createShips().forEach((ship) => {
+    player_1.gameboard.placeShipRandom(ship);
+  });
+
+  const computer = new Computer(new Gameboard(), "Computer");
+  createShips().forEach((ship) => {
+    computer.gameboard.placeShipRandom(ship);
+  });
+
+  await loadPlayerBoardSetupScreen(player_1);
+
+  while (
+    !player_1.gameboard.isAllShipsSunk() &&
+    !computer.gameboard.isAllShipsSunk()
+  ) {
+    await loadPlayGameScreen(player_1, computer);
+    const computerChoice = computer.searchForShip();
+    const hitOrMiss = player_1.gameboard.receiveAttack(
+      computerChoice[0],
+      computerChoice[1],
+    );
+    computer.markLocation(computerChoice, hitOrMiss);
+  }
+
+  return await loadGameEndScreen(
+    player_1.gameboard.isAllShipsSunk() ? computer : player_1,
+  );
+}
 
 async function twoPlayerGame() {
   const player_1 = new Player(new Gameboard(), "Player 1");
@@ -63,7 +93,7 @@ async function twoPlayerGame() {
     turnCounter++;
   }
 
-  return await loadTwoPlayerEndScreen(
+  return await loadGameEndScreen(
     playersArr[0].gameboard.isAllShipsSunk() ? playersArr[1] : playersArr[0],
     "twoPlayer",
   );

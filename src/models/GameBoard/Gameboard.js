@@ -96,8 +96,8 @@ class Gameboard {
     let shipPlaced = false;
     while (!shipPlaced) {
       // find a random point on the map
-      const randomRow = Math.floor(Math.random() * (this.board.length - 1));
-      const randomCol = Math.floor(Math.random() * (this.board[0].length - 1));
+      const randomRow = Math.floor(Math.random() * this.board.length);
+      const randomCol = Math.floor(Math.random() * this.board[0].length);
 
       const positive = Math.random() > 0.5 ? 1 : -1;
       const horizontal = Math.random() > 0.5 ? true : false;

@@ -1,5 +1,3 @@
-import Ship from "../models/Ship/Ship.js";
-
 const cellSize = 50;
 document.documentElement.style.setProperty("--cell-size", `${cellSize}px`);
 

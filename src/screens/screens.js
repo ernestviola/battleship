@@ -17,6 +17,10 @@ async function loadTitleScreen() {
     title.textContent = "BATTLESHIP";
     title.className = "title";
 
+    singlePlayerBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      resolve("singlePlayer");
+    });
     twoPlayerBtn.addEventListener("click", (e) => {
       e.preventDefault();
       resolve("twoPlayer");
@@ -108,7 +112,7 @@ async function loadPassToPlayerScreen(player) {
   });
 }
 
-async function loadTwoPlayerEndScreen(player, gameType) {
+async function loadGameEndScreen(player, gameType) {
   return new Promise((resolve) => {
     gameContainer.replaceChildren();
     const endScreenEl = document.createElement("div");
@@ -117,7 +121,7 @@ async function loadTwoPlayerEndScreen(player, gameType) {
     const newGameBtn = document.createElement("button");
     const titleScreenBtn = document.createElement("button");
 
-    title.innerText = `${player.name} is the Winner!`;
+    title.innerText = `${player.name} Wins!`;
     titleScreenBtn.innerText = "Title Screen";
     newGameBtn.innerText = "New Game";
 
@@ -143,5 +147,5 @@ export {
   loadPlayerBoardSetupScreen,
   loadPassToPlayerScreen,
   loadPlayGameScreen,
-  loadTwoPlayerEndScreen,
+  loadGameEndScreen,
 };
