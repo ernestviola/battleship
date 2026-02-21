@@ -80,7 +80,7 @@ function setupShipDragAndDrop() {
   });
 }
 
-function renderGameboard(gameboard, hideShips, resolve) {
+function renderGameboard(gameboard, hideShips, resolve, grabOff) {
   const gameboardEl = document.createElement("div");
   gameboardEl.className = "gameboard";
 
@@ -129,9 +129,10 @@ function renderGameboard(gameboard, hideShips, resolve) {
         i,
         gameboard.ships[i].ship.color,
       );
-      if (!resolve) {
+      if (!grabOff) {
         shipEl.style.cursor = "grab";
       }
+
       gameboardEl.appendChild(shipEl);
     }
   }

@@ -14,7 +14,6 @@ import {
 
 export default async function startGame() {
   let choice = await loadTitleScreen();
-  console.log(choice);
   while (true) {
     if (choice === "twoPlayer") {
       choice = await twoPlayerGame();
@@ -54,6 +53,7 @@ async function singlePlayerGame() {
 
   return await loadGameEndScreen(
     player_1.gameboard.isAllShipsSunk() ? computer : player_1,
+    "singlePlayer",
   );
 }
 
@@ -103,11 +103,11 @@ async function twoPlayerGame() {
 
 function createShips() {
   const shipArr = [];
-  // shipArr.push(new Ship(4, "rgba(240, 10, 10, 0.63)"));
-  // shipArr.push(new Ship(3, "rgba(255, 176, 92, 0.63)"));
-  // shipArr.push(new Ship(3, "rgba(255, 245, 59, 0.63)"));
-  // shipArr.push(new Ship(2, "rgba(133, 238, 63, 0.63)"));
-  // shipArr.push(new Ship(2, "rgba(16, 241, 215, 0.63)"));
+  shipArr.push(new Ship(4, "rgba(240, 10, 10, 0.63)"));
+  shipArr.push(new Ship(3, "rgba(255, 176, 92, 0.63)"));
+  shipArr.push(new Ship(3, "rgba(255, 245, 59, 0.63)"));
+  shipArr.push(new Ship(2, "rgba(133, 238, 63, 0.63)"));
+  shipArr.push(new Ship(2, "rgba(16, 241, 215, 0.63)"));
   // shipArr.push(new Ship(1, "rgba(9, 129, 249, 0.63)"));
   // shipArr.push(new Ship(1, "rgba(106, 57, 241, 0.63)"));
   shipArr.push(new Ship(1, "rgba(251, 61, 182, 0.63)"));

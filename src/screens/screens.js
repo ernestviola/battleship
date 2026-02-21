@@ -12,10 +12,13 @@ async function loadTitleScreen() {
     const singlePlayerBtn = document.createElement("button");
     const twoPlayerBtn = document.createElement("button");
 
+    titleScreenEl.className = "title-screen";
+    title.className = "title";
+    btnsEl.className = "buttons-container";
+
     singlePlayerBtn.innerText = "1-Player";
     twoPlayerBtn.innerText = "2-Players";
     title.textContent = "BATTLESHIP";
-    title.className = "title";
 
     singlePlayerBtn.addEventListener("click", (e) => {
       e.preventDefault();
@@ -70,7 +73,7 @@ async function loadPlayGameScreen(player, opponent) {
     const gameBoardsContainer = document.createElement("div");
     const title = document.createElement("h1");
 
-    const playerBoard = renderGameboard(player.gameboard, false);
+    const playerBoard = renderGameboard(player.gameboard, false, null, true);
     const opponentBoard = renderGameboard(opponent.gameboard, true, resolve);
 
     title.innerText = `${player.name}'s Turn`;

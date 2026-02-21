@@ -5,8 +5,6 @@
  * S = unhit SHIP
  */
 
-import Ship from "../Ship/Ship.js";
-
 class Gameboard {
   board = null;
   ships = [];
