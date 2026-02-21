@@ -118,11 +118,15 @@ async function loadPassToPlayerScreen(player) {
 async function loadGameEndScreen(player, gameType) {
   return new Promise((resolve) => {
     gameContainer.replaceChildren();
+
     const endScreenEl = document.createElement("div");
     const title = document.createElement("h1");
     const btnsContainer = document.createElement("div");
     const newGameBtn = document.createElement("button");
     const titleScreenBtn = document.createElement("button");
+
+    endScreenEl.className = "end-screen";
+    btnsContainer.className = "buttons-container";
 
     title.innerText = `${player.name} Wins!`;
     titleScreenBtn.innerText = "Title Screen";
